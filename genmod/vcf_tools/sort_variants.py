@@ -67,3 +67,39 @@ def sort_variants(infile, mode='chromosome'):
     
     return 
 
+def sort_variants_valid_vcf(infile):
+    """
+    Sort variants based on chromosome to produce valid VCF records
+    
+    Uses unix sort to sort the variants and overwrites the infile.
+    
+    Args:
+        infile : A string that is the path to a file
+    
+    Returns:
+        0 if sorting was performed
+        1 if variants where not sorted
+    """
+
+    command = [
+            'sort',
+            ]
+    command.append('-k1,1 -k2,2n -v')
+    command = command + [infile, '-o', infile]
+
+    logger.info("Start sorting variants...")
+    logger.info("Sort command: {0}".format(' '.join(command)))
+    sort_start = datetime.now()
+    
+    try:
+        call(command)
+    except OSError as e:
+        logger.warning("unix program 'sort' does not seem to exist on your system...")
+        logger.warning("genmod needs unix sort to provide a sorted output.")
+        logger.warning("Output VCF will not be sorted since genmod can not find"\
+                        "unix sort")
+        raise e
+
+    logger.info("Sorting done. Time to sort: {0}".format(datetime.now()-sort_start))
+    
+    return 

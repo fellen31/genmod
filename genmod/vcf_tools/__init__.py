@@ -8,7 +8,7 @@ add_genetic_models_header, add_compounds_header)
 from .print_headers import print_headers
 from .print_variants import (print_variant, print_variant_for_sorting, 
 print_variant_dict)
-from .sort_variants import sort_variants
+from .sort_variants import sort_variants, sort_variants_valid_vcf
 from .check_info_header import check_info
 from .parse_variant import (get_variant_dict, get_info_dict, get_variant_id, 
 get_vep_dict)
