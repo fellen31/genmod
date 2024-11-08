@@ -23,7 +23,7 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 
 from genmod.vcf_tools import (HeaderParser, add_metadata, print_headers, 
-sort_variants, print_variant)
+sort_variants_valid_vcf, print_variant)
 from genmod.utils import (get_batches, VariantPrinter)
 from genmod.score_variants import CompoundScorer
 
@@ -34,6 +34,9 @@ from .utils import (variant_file, silent, outfile, processes, temp_dir,
 
 logger = logging.getLogger(__name__)
 util.abstract_sockets_supported = False
+
+from genmod.log import init_log
+init_log(logger, loglevel="INFO")
 
 @click.command('compound', short_help="Score compounds")
 @variant_file
@@ -164,10 +167,10 @@ def compound(context, variant_file, silent, outfile, vep, threshold: int, penalt
         results.put(None)
         variant_printer.join()
         
-        sort_variants(infile=temp_file.name, mode='chromosome')
         
+        sort_variants_valid_vcf(infile=temp_file.name)
         print_headers(head=head, outfile=outfile, silent=silent)
-        
+        print("Printing variants")
         with open(temp_file.name, 'r', encoding='utf-8') as f:
             for line in f:
                 print_variant(

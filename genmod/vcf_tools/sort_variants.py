@@ -81,11 +81,7 @@ def sort_variants_valid_vcf(infile):
         1 if variants where not sorted
     """
 
-    command = [
-            'sort',
-            ]
-    command.append('-k1,1 -k2,2n -v')
-    command = command + [infile, '-o', infile]
+    command = '( grep \'^#\'' + infile + '&& grep -v \'^#\'' + infile + '| sort -k1,1 -k2,2n -V -o' + outfile
 
     logger.info("Start sorting variants...")
     logger.info("Sort command: {0}".format(' '.join(command)))
@@ -94,10 +90,10 @@ def sort_variants_valid_vcf(infile):
     try:
         call(command)
     except OSError as e:
-        logger.warning("unix program 'sort' does not seem to exist on your system...")
-        logger.warning("genmod needs unix sort to provide a sorted output.")
+        logger.warning("unix programs 'sort' and 'grep' does not seem to exist on your system...")
+        logger.warning("genmod needs unix sort and grep to provide a sorted output.")
         logger.warning("Output VCF will not be sorted since genmod can not find"\
-                        "unix sort")
+                        "unix sort or grep")
         raise e
 
     logger.info("Sorting done. Time to sort: {0}".format(datetime.now()-sort_start))
